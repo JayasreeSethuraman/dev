@@ -1,75 +1,56 @@
 import React, { Component } from 'react';
-import './App.css';
-import Person from './Person/Person';
+import classes from './App.css';
+import WithClass from '../hoc/WithClass';
+import Lsp from '../components/Lsp/Lsp';
+import PersonPanel from '../components/Panel/Person/PersonPanel';
+
 
 class App extends Component {
-  state = {
-    persons: [
-      {id: 1, name:'Jay', age:22},
-      {id: 2, name:'ibbu', age:21},
-      {id: 3, name:'Bama', age:52}
-    ],
-    showPersons: false
+  constructor(props) {
+    super(props);
+    console.log('[App.js] constructor()');
+    this.state = {
+      entitySelect: 'person'
+    }
   }
 
-  nameChangedHandler = (event, id) => {
-    const personIndex = this.state.persons.findIndex(p => {
-      return p.id === id;
-    });
-    const person = { 
-      ...this.state.persons[personIndex]
-    };
-    person.name = event.target.value;
-    const persons = [...this.state.persons];
-    persons[personIndex] = person;
-    this.setState( {persons: persons} );
-  }
-  togglePersonsHandler = () => {
-    const doesShow = this.state.showPersons;
-    this.setState({ showPersons: !doesShow });
+  componentWillMount() {
+    console.log('[App.js] componentWillMount()');
   }
 
-  deletePersonHandler = (personIndex) => {
-    const persons = [...this.state.persons];
-    persons.splice(personIndex, 1);
-    this.setState({persons: persons});
+  onSelectPerson = () => {
+      this.setState(
+        {
+          entitySelect: 'person'
+        }
+      );
+
   }
+
+  onSelectAddress = () => {
+    this.setState(
+      {
+        entitySelect: 'address'
+      }
+    );
+}
 
   render() {
-    const style = {
-      backgroundColor: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '5px',
-      cursor: 'pointer'
-    };
-  let persons = null;
-
-    if (this.state.showPersons) {
-      persons = (
-        <div>
-          {
-            this.state.persons.map((person, index) => {
-              return <Person 
-              click={() => this.deletePersonHandler(index)}
-              name={person.name}
-              age={person.age}
-              key={person.id}
-              changed={(event) => this.nameChangedHandler(event,        person.id)} />
-            })
-          }
-        </div>
-      );
+    console.log('[App.js] render()');
+    // console.log(classes);
+    let entity = null;
+    if ('person' === this.state.entitySelect) {
+      entity = (
+        <PersonPanel />
+      )
     }
-
     return (
-      <div className="App">
-        <h1>Hi, This is React</h1>
-        <button
-          style={style}
-          onClick={this.togglePersonsHandler}>toggle Persons</button>
-        { persons }
-      </div>
+      <WithClass classes={classes.App}>
+        <Lsp
+           personClicked={this.onSelectPerson}
+           addressClicked={this.onSelectAddress} />
+        {entity}
+      </WithClass>
     );
   }
 }

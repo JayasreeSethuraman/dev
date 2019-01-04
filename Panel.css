@@ -1,0 +1,9 @@
+.Panel {
+  float: right;
+  border: 2px solid black;
+  width: 90%;
+  height: 50%;
+  position: relative;
+  box-sizing: border-box;
+  padding: 20px;
+}
