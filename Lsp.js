@@ -1,13 +1,15 @@
 import React from 'react';
 //import WithClass from '../hoc/WithClass';
 import classes from './Lsp.css';
+import { Link } from 'react-router-dom';
 
 const lsp = (props) => {
     let lspClass = classes.Lsp;
+    // console.log('lsp');
     return (
         <div className={lspClass}>
-            <button onClick={props.personClicked}>Person</button>
-            <button onClick={props.addressClicked}>Address</button>
+            <Link to= "/person">Person</Link>
+            <Link to="/address">Address</Link>
         </div>
     );
 }

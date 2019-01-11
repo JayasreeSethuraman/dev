@@ -1,6 +1,6 @@
 .Lsp {
   border : 1px solid black;
-  width: 180px;
+  width: 8%;
   height: 100%;
   float: left;
   position: absolute;
@@ -17,3 +17,9 @@
   cursor: pointer;
   font-size: 17px;
 }
+
+.Lsp a {
+  text-decoration: none;
+  color: black;
+}
+
