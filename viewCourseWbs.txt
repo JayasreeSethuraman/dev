@@ -1,0 +1,387 @@
+**Problem Statement:**
+
+    Selected course should be displayed with course details
+
+**Inferred Requirement:**
+
+    1. course details service
+    2. user role
+    3. API
+
+**Possibilities:**
+
+Positive Possibilities:
+
+    1. User views RMO assigned course
+    2. User views course after request raised
+    3. User views course before enroll the course
+    4. User views enrolled course
+
+Negative Possibilities:
+
+    1. Unable to obtain course information
+
+**Jobs to be done:**
+
+    1. load view course page
+    2. display course details
+    3. display course content details
+
+**Load view course page:**
+
+    Start state: load view course page by clicking a course
+    Possibilities:
+        1. course detail available in response
+        2. course detail not available in response
+
+    1. course detail available in response
+    End state: course details and content should be displayed
+    Implementation plan:
+        ViewCourse.component.js:
+            componentDidMount():
+                1. make api call with payload- course name and user role
+                2. get course details and store in state
+
+            render():
+                1. pass courseDetails from state to its child components as props
+                2. render child components- CourseDetails and CourseContent
+
+    props:
+        course name
+        user role
+    state:
+        courseDetails - initialize with empty array
+    variables:
+        viewCourse - to store its child components
+
+    2. course detail not available in response
+    End state: error message should be displayed
+    Implementation plan:
+        ViewCourse.component.js:
+            componentDidMount():
+                1. make api call with payload- course name and user role
+                2. get error message from response and store in a variable- error
+
+            render():
+                1. display error message in view course page
+
+    variable:
+        error- to store error message from api response
+
+**Display course details:**
+
+    Start state: component is rendered by view course by passing course details
+    End state: course details should be displayed
+
+    Jobs:
+        1. thumbnail
+        2. course name
+        3. request to RMO
+        4. request raised
+        5. enroll
+        6. continue to course
+        7. fav
+        8. pending evaluation
+        9. pending test
+        10. course completion date
+        11. progress
+        12. last evaluation score
+        13. last online test score
+        14. view all scores
+        15. reach out experts
+
+    1. thumbnail/course name:
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. get Thumbnail, Course name from courseDetail props
+                2. display Thumbnail, Course name on their respective places in the CourseDetail component
+
+    2. request to RMO/request raised/enroll/continue to course:
+    Possibilities:
+        1. when course is rmo-assigned
+        2. when course is self-assigned
+        3. when user is assigned to a course by rmo
+        4. when user is enrolled to a course
+        5. when user raised a request to rmo
+        6. clicking on enroll button
+        7. clicking on continue to course button
+        8. clicking on request to rmo button
+
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. check whether the course is rmo-assigned/self-assigned
+                2. if a course is rmo-assigned and not assigned to a user, then display Request to RMO button
+                3. if a course is rmo-assigned and assigned to a user, then display Enroll button
+                4. if a course is self-assigned, then display Enroll button
+                5. if a course is enrolled to a user, then display continue to course button
+                6. if a course is rmo-assigned and user raised a request to rmo for enrolling, then display Request raised button which should be disabled
+
+            onSelectContinueCourse():
+                1. get user's last viewed video information from CourseDetail props
+                2. move to the last video page that user's viewed
+
+            onSelectEnroll(): (out of story scope)
+                1. make api call with user payload to enroll the course for the user
+                2. change the button name to 'continue to course'
+
+            onSelectRequestToRmo(): (out of story scope)
+                1. make api call with user payload to request a rmo for enrolling a course
+                2. change the button name to 'request raised'
+
+    7. fav:
+    Possibilities:
+        1. when user view the course that he marked as favourite
+        2. when user view the course that he not marked as favourite
+        3. clicking on fav icon
+
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. if course is marked as favourite, display the highlighted fav icon
+                2. if course is not marked as favourite, display the fav icon without highlighting
+
+            onSelectFav(): (out of story scope)
+                1. make api call with user payload to mark the course as fav for the user
+                2. highlight the fav icon
+
+    8. pending evaluation:
+    Possibilities:
+        1. if the user having any pending evaluation
+        2. if the user doesn't have any pending evaluation
+        3. clicking on pending evaluation
+
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. if the user having any pending evaluation, display the pending evaluation link in red color
+                2. if the user doesn't have any pending evaluation, hide the pending evaluation link
+
+            onSelectPendingEvaluation():
+                1. get last pending evaluation details
+                2. move the page to last pending evaluation area in CourseContent component
+
+    9. pending test:
+    Possibilities:
+        1. if the user having any pending test
+        2. if the user doesn't have any pending test
+        3. clicking on pending test
+
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. if the user having any pending test, display the pending test link in red color
+                2. if the user doesn't have any pending test, hide the pending test link
+
+            onSelectPendingTest():
+                1. get last pending test details
+                2. move the page to last pending online test area in CourseContent component
+
+    10. course completion date:
+    Possibilities:
+        1. if a course is enrolled by a user
+        2. if a course is not enrolled by a user
+        3. completion date exceeds- less than 10 days
+        4. completion date exceeds- more than 10 days
+        5. when mouse hover on completion date
+
+    Implementation plan:
+    CourseDetail.component.js:
+        render():
+            1. if a course is enrolled by a user, show the course completion date in courseDetail component
+            2. if a course is not enrolled by a user, hide the course completion date
+            3. if the completion date exceeds,
+                a. if exceeded day is less than 10 days, show the course completion date in orange color
+                b. if exceeded day is more than 10 days, show the course completion date in red color
+
+        onHoverCourseCompletionDate():
+            1. get course completion date from CourseDetail props
+            2. calculate number of days delayed between course completion date and the current date
+            3. show the delayed days
+
+    11. progress:
+    Possibilities:
+        1. if a course is enrolled by a user
+        2. if a course is not enrolled by a user
+
+    Implementation plan:
+    CourseDetail.component.js:
+        render():
+            1. if a course is not enrolled by a user, hide the progress bar
+            2. if a course is enrolled by a user, show progress bar
+
+        calculateProgress():
+            1. get course completion status based on subtopics, online test, evaluation and exercise completion
+            2. calculate the progress based on course completion status
+            3. display progress in percentage
+
+    12. last evaluation score, last online test score:
+    Possibilities:
+        1. if a course is enrolled by a user
+        2. if a course is not enrolled by a user
+        3. if user attempted the evaluation/online test
+
+    Implementation plan:
+    CourseDetail.component.js:
+        render():
+            1. if a course is not enrolled by a user, hide the last evaluation score, last online test score
+            2. if a course is enrolled by a user and not attempted any evaluation/test, hide the last evaluation score, last online test score
+            3. if a course is enrolled by a user and if user attempted the evaluation/online test,
+                a. get the scores of last evaluation and last online test
+                b. display the scores of last evaluation and last online test
+
+    14. view all scores:
+    Possibilities:
+        1. if a course is enrolled by a user
+        2. if a course is not enrolled by a user
+        3. clicking on view all scores
+
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. if a course is not enrolled by a user, hide the view all scores link
+                2. if a course is enrolled by a user, show the view all scores link
+
+            onSelectViewAllScores():
+                1. redirect the user to Assessment page
+
+    15. reach out experts:
+    Possibilities:
+        1. clicking on reach out experts link
+
+    Implementation plan:
+        CourseDetail.component.js:
+            render():
+                1. display reach out experts link in courseDetail component
+
+            onSelectReachOutExperts():
+                1. get trainers name of the course from courseDetail props
+                2. display the trainers name in popup
+
+**Display Course content details:**
+
+    Start state: component is rendered by view course by passing course details
+    Possibilities:
+        1. if a course is enrolled by a user
+        2. if a course is not enrolled by a user
+
+    Jobs:
+        1. topic
+        2. evaluation
+
+    1.topic:
+    Possibilities:
+        1. clicking on topic area
+
+    Implementation plan:
+        CourseContent.component.js:
+            render():
+                1. if a course is not enrolled by a user, display topics details
+                2. if a course is enrolled by a user, display topics details
+                    a. Last viewed video's topic should be expanded
+                    b. enable/disable the topic content based on previous topic content/api completed flag
+
+        Topic.component.js:
+            onSelectTopic():
+                1. toggle between expand and contract on topic area based on user click
+                2. display topic content
+
+            render():
+                1. Topic should contain subtopics, exercise link, reference link and online test details
+                2. display Topic details,
+                    - topic number
+                    - topic name
+                    - completion date
+                    - forum link
+                    - number of subtopics completed/total number of subtopics
+                    - author name
+                3. display Sub-topic details,
+                    - play button
+                    - subtopic number
+                    - subtopic name
+                    - duration of the video
+                    - completion date
+                4. display Exercise details,
+                    - exercise link
+                    - completion date
+                5. display Reference Link
+                6. display Online Test,
+                    - attempted
+                    - score
+                    - test button
+
+        Jobs:
+            1. forum
+            2. subtopic
+            3. exercise
+            4. reference
+            5. online test
+
+        1. forum:
+        Possibilities:
+            1. clicking on forum
+            2. when no forum details for a topic
+
+        Implementation plan:
+            Topic.component.js:
+                onSelectForum():
+                    1. get topic id from topic
+                    2. redirect to Forum page of specific topic
+
+                render():
+                    1. if no forum details for a topic, hide the forum link
+
+        2. subtopic:
+        Possibilities:
+            1. when user clicking on play button
+
+        Implementation plan:
+            Topic.component.js:
+                onSelectPlay(): (out of story scope)
+                    1. redirect to video page
+
+        3. exercise:
+        Possibilities:
+            1. clicking on exercise
+
+        Implementation plan:
+            Topic.component.js:
+                onSelectExercise(): (out of story scope)
+                    1. make api call for exercise
+                    2. download the pdf
+
+        4. reference:
+        Possibilities:
+            1. clicking on reference
+
+        Implementation plan:
+            Topic.component.js:
+                onSelectReference(): (out of story scope)
+
+        5. online test:
+        Possibilities:
+            1. clicking on test button
+
+        Implementation plan:
+            Topic.component.js:
+                onSelectTest(): (out of story scope)
+                    1. redirect to OnlineTest page
+
+    2. evaluation:
+    Possibilities:
+        1. clicking on request for evaluation
+
+    Implementation plan:
+        Evaluation.component.js:
+            render():
+                1. display Evaluation details,
+                    - evaluation name
+                    - no of attempted
+                    - evaluation score
+                    - request for evaluation link
+
+            onSelectRequestForEvaluation(): (out of story scope)
+                1. make api call to request the evaluator for evaluation
+                2. get evaluation date
+                3. display the evaluation date
